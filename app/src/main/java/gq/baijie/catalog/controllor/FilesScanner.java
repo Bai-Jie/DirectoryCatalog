@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 import gq.baijie.catalog.entity.FileInformation;
 import gq.baijie.catalog.util.Hash;
@@ -33,6 +34,25 @@ public class FilesScanner {
         } else {
             fileInformation.setHash(Hash.hashFile(fileInformation.getPath(), messageDigest));
         }
+    }
+
+    public static boolean verifyFiles(
+            TreeNode<FileInformation> tree, MessageDigest messageDigest) throws IOException {
+        boolean allRight = true;
+        FileInformation fileInformation = tree.getData();
+        if (fileInformation.isDirectory()) {
+            for (TreeNode<FileInformation> subtree : tree.getChildren()) {
+                if (!verifyFiles(subtree, messageDigest)) {
+                    allRight = false;
+                    break;
+                }
+            }
+        } else {
+            allRight = Arrays.equals(
+                    fileInformation.getHash(),
+                    Hash.hashFile(fileInformation.getPath(), messageDigest));
+        }
+        return allRight;
     }
 
 

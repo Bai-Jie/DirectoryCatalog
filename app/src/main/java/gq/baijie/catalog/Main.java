@@ -12,6 +12,7 @@ import gq.baijie.catalog.controllor.FilesScanner;
 import gq.baijie.catalog.entity.FileInformation;
 import gq.baijie.catalog.util.DirectoryTreeRender;
 import gq.baijie.catalog.util.Printer;
+import gq.baijie.catalog.util.Scanner;
 import gq.baijie.catalog.util.TreeNode;
 
 public class Main {
@@ -24,15 +25,32 @@ public class Main {
 
         try (PrintStream testOutStream =
                      new PrintStream(testOutfile.toFile(), StandardCharsets.UTF_8.name())) {
-            TreeNode<FileInformation> tree = FilesScanner.walk(Paths.get("."));
+            Path rootPath = Paths.get(".");
+            TreeNode<FileInformation> tree = FilesScanner.walk(rootPath);
             FilesScanner.hashFiles(tree, MessageDigest.getInstance("MD5"));
             Printer printer = new Printer().setDirectoryTree(tree);
             testOutStream.println("---------------------- hash ----------------------");
-            testOutStream.println(printer.printHash());
+            String hashTable = printer.printHash();
+            testOutStream.println(hashTable);
             testOutStream.println("---------------------- directory tree 1 ----------------------");
             testOutStream.println(printer.renderDirectoryTree());
             testOutStream.println("---------------------- directory tree 2 ----------------------");
             testOutStream.println(DirectoryTreeRender.newInstance(false).renderDirectoryTree(tree));
+            testOutStream.println("-------------------- tree from HashTable --------------------");
+            TreeNode<FileInformation> treeFromHashTable =
+                    Scanner.fromHashTable(hashTable, rootPath);
+            String hashTableOfParsed = printer.setDirectoryTree(treeFromHashTable).printHash();
+            testOutStream.println(hashTableOfParsed);
+            if (hashTable.equals(hashTableOfParsed)) {
+                System.out.println("hashTable.equals(hashTableOfParsed)");
+            } else {
+                System.err.println("*not* hashTable.equals(hashTableOfParsed)");
+            }
+            if (FilesScanner.verifyFiles(treeFromHashTable, MessageDigest.getInstance("MD5"))) {
+                System.out.println("FilesScanner.verifyFiles() == true");
+            } else {
+                System.err.println("FilesScanner.verifyFiles() == *false*");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

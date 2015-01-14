@@ -1,5 +1,6 @@
 package gq.baijie.catalog.util;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,24 +42,30 @@ public class Printer {
     }
 
     public void printHash(StringBuilder out) {
-        printHash(mDirectoryTree, out, 1);
+        printHash(mDirectoryTree, out, 1, mDirectoryTree.getData().getPath());
     }
 
-    private void printHash(TreeNode<FileInformation> tree, StringBuilder out, int depth) {
+    private void printHash(
+            TreeNode<FileInformation> tree, StringBuilder out, int depth, Path root) {
         FileInformation fileInformation = tree.getData();
         if (fileInformation.isDirectory()) {
             out.append(mLineBreak);
-            out.append(fileInformation.getPath());
-            out.append(' ');
+            out.append("[D] ");
             for (long count = 1; count <= depth; count++) {
                 out.append('*');
             }
             out.append(' ');
             out.append(String.valueOf(depth));
             out.append(mLineBreak);
+            String directoryPath = root.relativize(fileInformation.getPath()).toString();
+            if (directoryPath.isEmpty()) {
+                directoryPath = ".";
+            }
+            out.append(directoryPath);
+            out.append(mLineBreak);
 
             for (TreeNode<FileInformation> subtree : tree.getChildren()) {
-                printHash(subtree, out, depth + 1);
+                printHash(subtree, out, depth + 1, root);
             }
         } else {
             out.append(fileInformation.getHashAsHex());
