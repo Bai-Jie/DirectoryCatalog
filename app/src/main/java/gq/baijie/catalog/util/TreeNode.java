@@ -37,6 +37,14 @@ public class TreeNode<E> implements Cloneable {
         return childNode;
     }
 
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "data=" + data +
+                ", children=" + children +
+                '}';
+    }
+
     /**
      * Returns a shallow copy of this {@code TreeNode}.
      * (The elements themselves and parent are not cloned.)

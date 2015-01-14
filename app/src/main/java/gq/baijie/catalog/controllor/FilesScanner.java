@@ -15,6 +15,7 @@ import gq.baijie.catalog.util.TreeNode;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
+//TODO empty directory
 public class FilesScanner {
 
 

@@ -39,6 +39,7 @@ public class Main {
             testOutStream.println("-------------------- tree from HashTable --------------------");
             TreeNode<FileInformation> treeFromHashTable =
                     Scanner.fromHashTable(hashTable, rootPath);
+            System.out.println(treeFromHashTable);
             String hashTableOfParsed = printer.setDirectoryTree(treeFromHashTable).printHash();
             testOutStream.println(hashTableOfParsed);
             if (hashTable.equals(hashTableOfParsed)) {
