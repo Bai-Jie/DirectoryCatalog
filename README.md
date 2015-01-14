@@ -1,6 +1,8 @@
 目录归档器
 ================
 
+[![Build Status](https://travis-ci.org/Bai-Jie/DirectoryCatalog.svg?branch=master)](https://travis-ci.org/Bai-Jie/DirectoryCatalog)
+
 功能
 -------------
 
