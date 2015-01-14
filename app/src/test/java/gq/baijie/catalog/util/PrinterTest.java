@@ -13,6 +13,7 @@ import static gq.baijie.catalog.test.util.Constant.DIRECTORY_ONE_FILE_CHANGED_A;
 import static gq.baijie.catalog.test.util.Constant.DIRECTORY_SAME_TO_A;
 import static gq.baijie.catalog.test.util.Utils.getPath;
 
+//TODO test empty directory
 public class PrinterTest {
 
     @Test
