@@ -1,0 +1,2 @@
+changed file 5 for testing file hash
+用于测试计算文件散列值得测试文件5（修改）
