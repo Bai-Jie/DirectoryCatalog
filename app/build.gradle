@@ -1,5 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
 
 group = 'gq.baijie.catalog'
 version = '1.0'
@@ -24,4 +27,13 @@ repositories {
 dependencies {
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
+}
+
+checkstyle {
+    toolVersion = "6.2"
+    configFile = rootProject.file 'config/checkstyle/checkstyle.xml'
+}
+
+pmd {
+    ruleSets = ["java-basic", "java-braces"/*, "java-junit"*/]
 }
