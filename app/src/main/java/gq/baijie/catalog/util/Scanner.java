@@ -80,7 +80,7 @@ public class Scanner {
             throw new RuntimeException("unkonw title:" + nextLine);//TODO exception
         }
         Directory result = new Directory();
-        result.depth = Integer.valueOf(matcher.group(1));
+        result.depth = Integer.parseInt(matcher.group(1));
         nextLine = nextNonemptyLine(src);
         if (nextLine == null) {
             throw new RuntimeException("should has directory"); // TODO exception

@@ -2,6 +2,7 @@ package gq.baijie.catalog.entity;
 
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 
 import gq.baijie.catalog.util.HEX;
 
@@ -43,7 +44,7 @@ public class FileInformation {
     }
 
     public byte[] getHash() {
-        return hash;
+        return Arrays.copyOf(hash, hash.length);
     }
 
     public String getHashAsHex() {
@@ -51,7 +52,7 @@ public class FileInformation {
     }
 
     public FileInformation setHash(byte[] hash) {
-        this.hash = hash;
+        this.hash = Arrays.copyOf(hash, hash.length);
         return this;
     }
 

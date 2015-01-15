@@ -4,6 +4,10 @@ package gq.baijie.catalog.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.meta.When;
+
+
 public class TreeNode<E> implements Cloneable {
 
     E data;
@@ -30,6 +34,7 @@ public class TreeNode<E> implements Cloneable {
         return children;
     }
 
+    @CheckReturnValue(when = When.NEVER)
     public TreeNode<E> addChild(E child) {
         TreeNode<E> childNode = new TreeNode<E>(child);
         childNode.parent = this;

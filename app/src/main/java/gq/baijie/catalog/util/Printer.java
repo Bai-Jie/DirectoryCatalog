@@ -13,7 +13,7 @@ public class Printer {
 
     private TreeNode<FileInformation> mDirectoryTree;
 
-    public static final Comparator<TreeNode<FileInformation>> mDirectoryTreeComparator =
+    public static final Comparator<TreeNode<FileInformation>> DIRECTORY_TREE_COMPARATOR =
             (o1, o2) -> o1.getData().isDirectory() ?
                     o2.getData().isDirectory() ? 0 : 1 :
                     o2.getData().isDirectory() ? -1 : 0;
@@ -32,7 +32,7 @@ public class Printer {
     private static void sortDirectoryTree(TreeNode<FileInformation> directoryTree) {
         List<TreeNode<FileInformation>> children = directoryTree.getChildren();
         children.forEach(gq.baijie.catalog.util.Printer::sortDirectoryTree);
-        Collections.sort(children, mDirectoryTreeComparator);
+        Collections.sort(children, DIRECTORY_TREE_COMPARATOR);
     }
 
     public String printHash() {

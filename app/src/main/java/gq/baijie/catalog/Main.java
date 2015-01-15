@@ -19,11 +19,15 @@ public class Main {
                 System.exit(0);
             }
         } else if (args.length == 3) {
-            if (args[0].matches("^(?i:-a|--algorithm)$")) {
-                if (args[1].matches("^(?i:MD5|SHA1|SHA256)$")) {
+            if (args[0].matches("^(?i:-a|--algorithm)$")) { // check switch type
+                if (args[1].matches("^(?i:MD5|SHA1|SHA256)$")) { // check algorithm
                     Command.newInstance(SCAN).setAlgorithm(args[1]).setDirectory(args[2]).run();
                     System.exit(0);
+                } else {
+                    System.err.println("Unsupported Algorithm:" + args[1]);
                 }
+            } else {
+                System.err.println("Unsupported Switch:" + args[0]);
             }
         }
         printUsage();
