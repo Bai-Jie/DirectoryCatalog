@@ -29,4 +29,25 @@ public class Hash {
         }
         return messageDigest.digest();
     }
+
+    public static String probeHashAlgorithm(int bitsLength) {
+        switch (bitsLength) {
+            case 128:
+                return "MD5";
+            case 160:
+                return "SHA-1";
+            case 256:
+                return "SHA-256";
+            default:
+                return null;
+        }
+    }
+
+    public static String probeHashAlgorithm(byte[] hashValue) {
+        return probeHashAlgorithm(hashValue.length * 8);
+    }
+
+    public static String probeHashAlgorithm(String hashValueHex) {
+        return probeHashAlgorithm(hashValueHex.length() * 4);
+    }
 }

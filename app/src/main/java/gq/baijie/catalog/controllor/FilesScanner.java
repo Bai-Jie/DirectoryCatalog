@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import gq.baijie.catalog.entity.FileInformation;
@@ -36,6 +37,41 @@ public class FilesScanner {
         }
     }
 
+    private static FileInformation getFirstFileInformation(TreeNode<FileInformation> tree) {
+        if (tree.getData().isDirectory()) {
+            for (TreeNode<FileInformation> subtree : tree.getChildren()) {
+                FileInformation fileInformation = getFirstFileInformation(subtree);
+                if (fileInformation != null) {
+                    return fileInformation;
+                }
+            }
+            return null;
+        } else {
+            return tree.getData();
+        }
+    }
+
+    /**
+     * {@link #verifyFiles(TreeNode, MessageDigest) verifyFiles} with
+     * {@link Hash#probeHashAlgorithm(byte[]) probed Hash Algorithm}.
+     */
+    public static boolean verifyFiles(TreeNode<FileInformation> tree) throws IOException {
+        FileInformation firstFile = getFirstFileInformation(tree);
+        MessageDigest messageDigest;
+        if (firstFile != null) {
+            try {
+                messageDigest =
+                        MessageDigest.getInstance(Hash.probeHashAlgorithm(firstFile.getHash()));
+            } catch (NoSuchAlgorithmException e) {
+                throw new Error("Unknown Hash Algorithm. See this ↑ ^_-", e);
+            }
+        } else {
+            messageDigest = null;
+        }
+        return verifyFiles(tree, messageDigest);
+    }
+
+    //TODO verify directories themselves
     public static boolean verifyFiles(
             TreeNode<FileInformation> tree, MessageDigest messageDigest) throws IOException {
         boolean allRight = true;
