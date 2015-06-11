@@ -1,33 +1,17 @@
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
 
-group = 'gq.baijie.catalog'
-version = '1.0'
-
 mainClassName = group + '.Main'
-
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-tasks.withType(JavaCompile) { task ->
-    task.options.encoding = 'UTF-8'
-}
-tasks.withType(Javadoc) { task ->
-    task.options.encoding = 'UTF-8'
-}
-
-repositories {
-    jcenter()
-}
-
 dependencies {
+    compile project(':domain')
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'commons-io:commons-io:2.4'
-    testCompile 'junit:junit:4.12'
 }
 
 checkstyle {

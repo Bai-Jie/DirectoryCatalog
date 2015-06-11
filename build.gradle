@@ -1,0 +1,30 @@
+List<String> javaSubprojects = [
+        ':domain',
+        ':app'
+]
+
+javaSubprojects.each { projectPath ->
+    project(projectPath) {
+        apply plugin: 'java'
+
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        version = '1.0'
+
+        group = 'gq.baijie.catalog'
+
+        tasks.withType(JavaCompile) { task ->
+            task.options.encoding = 'UTF-8'
+        }
+        tasks.withType(Javadoc) { task ->
+            task.options.encoding = 'UTF-8'
+        }
+
+        repositories {
+            jcenter()
+        }
+
+        dependencies {
+            testCompile 'junit:junit:4.12'
+        }
+    }
+}
