@@ -2,6 +2,7 @@ package gq.baijie.catalog.util;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -28,11 +29,30 @@ public class HEXTest {
 
     @Test
     public void testBytesToHex() {
-        assertEquals(HEX_STRING, HEX.bytesToHex(BYTES));
+        String resultHex = HEX.bytesToHex(BYTES);
+        System.out.println("HEX.bytesToHex(BYTES): " + resultHex);
+        assertEquals(HEX_STRING, resultHex);
     }
 
     @Test
     public void testHexToBytes() {
-        assertArrayEquals(BYTES, HEX.hexToBytes(HEX_STRING));
+        byte[] resultBytes = HEX.hexToBytes(HEX_STRING);
+        System.out.println("HEX.hexToBytes(HEX_STRING): " + Arrays.toString(resultBytes));
+        assertArrayEquals(BYTES, resultBytes);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testHexToBytesIllegalFormat1() {
+        HEX.hexToBytes("0");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testHexToBytesIllegalFormat2() {
+        HEX.hexToBytes("dca");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testHexToBytesIllegalFormat3() {
+        HEX.hexToBytes("fg");
     }
 }

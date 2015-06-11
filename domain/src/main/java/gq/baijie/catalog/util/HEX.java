@@ -31,13 +31,25 @@ public class HEX {
     }
 
     public static byte[] hexToBytes(String hex) {
+        if (hex.length() % 2 != 0) {
+            throw new IllegalArgumentException(
+                    "illegal hex: length of hex string isn't even number");
+        }
         char[] hexChars = hex.toUpperCase(Locale.US).toCharArray();
         byte[] result = new byte[hexChars.length / 2];
         for (int j = 0; j < result.length; j++) {
-            int v = HEX_TO_INTEGER.get(hexChars[j * 2]);
+            int v = hexCharToHalfByte(hexChars[j * 2]);
             v <<= 4;
-            v |= HEX_TO_INTEGER.get(hexChars[j * 2 + 1]);
+            v |= hexCharToHalfByte(hexChars[j * 2 + 1]);
             result[j] = (byte) v;
+        }
+        return result;
+    }
+
+    private static int hexCharToHalfByte(char hexChar) {
+        Integer result = HEX_TO_INTEGER.get(hexChar);
+        if (result == null) {
+            throw new IllegalArgumentException("Illegal hex char: " + hexChar);
         }
         return result;
     }
