@@ -1,4 +1,5 @@
 rootProject.name = 'DirectoryCatalog'
 
-include 'app'
 include 'domain'
+include 'business'
+include 'app'
