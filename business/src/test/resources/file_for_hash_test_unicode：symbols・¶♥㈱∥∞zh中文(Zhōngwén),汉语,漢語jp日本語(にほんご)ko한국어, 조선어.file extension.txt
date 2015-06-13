@@ -1,0 +1,2 @@
+file for testing file hash with complex filename
+用于测试计算文件散列值得测试文件（使用复杂文件名）
