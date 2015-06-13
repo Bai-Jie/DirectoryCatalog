@@ -11,7 +11,7 @@ public class RegularFile extends File {
     @Nonnull
     private final List<Hash> hashs = new LinkedList<>();
 
-    protected RegularFile(Path path) {
+    public RegularFile(Path path) {
         super(path);
     }
 
