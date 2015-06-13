@@ -10,14 +10,16 @@ public class Hash {
     private final Algorithm algorithm;
 
     @Nonnull
-    private final byte[] value;
+    private byte[] value;
 
     public Hash(@Nonnull byte[] value, @Nonnull Algorithm algorithm) {
-        if (algorithm.bitsLength != value.length * 8) {
-            throw new IllegalArgumentException("value's length isn't consistent with algorithm");
-        }
         this.algorithm = algorithm;
-        this.value = value.clone();
+        setValue(value);
+    }
+
+    public Hash(@Nonnull Algorithm algorithm) {
+        this.algorithm = algorithm;
+        setValue(new byte[algorithm.bitsLength / 8]);
     }
 
     public Hash(@Nonnull byte[] value) {
@@ -26,7 +28,7 @@ public class Hash {
             throw new IllegalArgumentException("Unknown algorithm");
         }
         this.algorithm = algorithm;
-        this.value = value.clone();
+        setValue(value);
     }
 
 
@@ -38,6 +40,17 @@ public class Hash {
     @Nonnull
     public byte[] getValue() {
         return value.clone();
+    }
+
+    public void setValue(@Nonnull byte[] value) {
+        ensureConsistent(value);
+        this.value = value.clone();
+    }
+
+    private void ensureConsistent(@Nonnull byte[] valule) {
+        if (algorithm.bitsLength != valule.length * 8) {
+            throw new IllegalArgumentException("value's length isn't consistent with algorithm");
+        }
     }
 
     @Override

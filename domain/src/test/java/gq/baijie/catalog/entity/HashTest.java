@@ -2,6 +2,8 @@ package gq.baijie.catalog.entity;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import gq.baijie.catalog.util.HEX;
 
 import static org.junit.Assert.assertEquals;
@@ -63,6 +65,13 @@ public class HashTest {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA256_HEX), Hash.Algorithm.SHA256);
     }
 
+    // for public Hash(Algorithm algorithm)
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructorWithAlgorithmNull() {
+        Hash hash = new Hash((Hash.Algorithm) null);
+    }
+
     // for public Hash(byte[] value)
 
     @Test
@@ -78,7 +87,7 @@ public class HashTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructorWithByteArrayNull() {
-        Hash hash = new Hash(null);
+        Hash hash = new Hash((byte[]) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -94,6 +103,37 @@ public class HashTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayErrorValue3() {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA256_HEX));
+    }
+
+    // for public byte[] getValue()
+
+    @Test
+    public void testGetValue() {
+        Hash hash = new Hash(HEX.hexToBytes(SHA256_HEX));
+        byte[] value = hash.getValue();
+        System.arraycopy(HEX.hexToBytes(SHA256_HEX2), 0, value, 0, value.length);
+        assertFalse(Arrays.equals(hash.getValue(), value));
+    }
+
+    // for public void setValue(byte[] value)
+
+    @Test
+    public void testSetValue() {
+        Hash hash = new Hash(Hash.Algorithm.SHA256);
+        byte[] value = HEX.hexToBytes(SHA256_HEX);
+        hash.setValue(value);
+        System.arraycopy(HEX.hexToBytes(SHA256_HEX2), 0, value, 0, value.length);
+        assertFalse(Arrays.equals(hash.getValue(), value));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetValueWithByteArrayNull() {
+        new Hash(Hash.Algorithm.SHA256).setValue(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetValueWithByteArrayErrorValue() {
+        new Hash(Hash.Algorithm.SHA1).setValue(HEX.hexToBytes("00" + SHA1_HEX));
     }
 
     // for public boolean equals(Object obj)
