@@ -7,29 +7,53 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.entity.Hash.Algorithm;
-import gq.baijie.catalog.entity.RegularFile;
 
 public class HashFile implements UseCase {
 
-    private final RegularFile file;
+    @Nonnull
+    private final Path file;
 
+    @Nonnull
+    private final Algorithm[] algorithms;
+
+    @Nonnull
     private final Map<Algorithm, MessageDigest> messageDigestCache;
 
+    @Nonnull
+    private final Hash[] hashResults;
+
+    /**
+     * hash file with appointed algorithms
+     *
+     * @param file               the regular file will be hashed
+     * @param algorithms         the hash algorithms
+     * @param messageDigestCache {@link MessageDigest} objects cache for reusing
+     * @param hashResults        the hash results of file
+     * @throws IllegalArgumentException if hashResults.length < algorithms.length
+     */
     public HashFile(
-            @Nonnull RegularFile file, @Nonnull Map<Algorithm, MessageDigest> messageDigestCache) {
+            @Nonnull Path file,
+            @Nonnull Algorithm[] algorithms,
+            @Nonnull Map<Algorithm, MessageDigest> messageDigestCache,
+            @Nonnull Hash[] hashResults) {
+        if (hashResults.length < algorithms.length) {
+            throw new IllegalArgumentException("hashResults.length < algorithms.length");
+        }
         this.file = file;
+        this.algorithms = algorithms;
         this.messageDigestCache = messageDigestCache;
+        this.hashResults = hashResults;
     }
 
     public void execute() {
@@ -43,13 +67,19 @@ public class HashFile implements UseCase {
     }
 
     private void execute0() throws IOException, NoSuchAlgorithmException {
-        final MessageDigest[] messageDigests = getMessageDigests();
-        if (messageDigests.length == 0) {
+        if (algorithms.length == 0) {
             return;
         }
+        final MessageDigest[] messageDigests = getMessageDigests();
         final DigestOutputStream digestOutputStream = generateDigestOutputStream(messageDigests);
 
-        try (FileChannel fileChannel = FileChannel.open(file.getPath(), StandardOpenOption.READ);
+        doHash(digestOutputStream);
+
+        saveHashValues(messageDigests);
+    }
+
+    private void doHash(DigestOutputStream digestOutputStream) throws IOException {
+        try (FileChannel fileChannel = FileChannel.open(file, StandardOpenOption.READ);
              WritableByteChannel target = Channels.newChannel(digestOutputStream)) {
             final long fileSize = fileChannel.size();
             long count;
@@ -59,17 +89,14 @@ public class HashFile implements UseCase {
                 count = fileChannel.transferTo(position, maxCount, target);
             }
         }
-
-        saveHashValues(messageDigests);
     }
 
     @Nonnull
     private MessageDigest[] getMessageDigests() throws NoSuchAlgorithmException {
-        final List<Hash> fileHashs = file.getHashs();
-        final MessageDigest[] messageDigests = new MessageDigest[fileHashs.size()];
+        final MessageDigest[] messageDigests = new MessageDigest[algorithms.length];
         int count = 0;
-        for (Hash hash : fileHashs) {
-            messageDigests[count++] = toMessageDigest(hash.getAlgorithm());
+        for (Algorithm algorithm : algorithms) {
+            messageDigests[count++] = toMessageDigest(algorithm);
         }
         return messageDigests;
     }
@@ -102,8 +129,9 @@ public class HashFile implements UseCase {
 
     private void saveHashValues(@Nonnull MessageDigest[] messageDigests) {
         int count = 0;
-        for (Hash hash : file.getHashs()) {
-            hash.setValue(messageDigests[count++].digest());
+        for (Algorithm algorithm : algorithms) {
+            hashResults[count] = new Hash(messageDigests[count].digest(), algorithm);
+            count++;
         }
     }
 

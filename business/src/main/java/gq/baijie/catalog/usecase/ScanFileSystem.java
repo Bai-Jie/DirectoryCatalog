@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import javax.annotation.Nonnull;
+
 import gq.baijie.catalog.entity.DirectoryFile;
 import gq.baijie.catalog.entity.RegularFile;
 
@@ -14,9 +16,10 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 
 public class ScanFileSystem implements UseCase {
 
+    @Nonnull
     private final DirectoryFile rootDirectoryFile;
 
-    public ScanFileSystem(DirectoryFile rootDirectoryFile) {
+    public ScanFileSystem(@Nonnull DirectoryFile rootDirectoryFile) {
         this.rootDirectoryFile = rootDirectoryFile;
     }
 

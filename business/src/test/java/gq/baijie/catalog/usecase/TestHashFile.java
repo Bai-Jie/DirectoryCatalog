@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import gq.baijie.catalog.entity.Hash;
-import gq.baijie.catalog.entity.RegularFile;
 
 import static gq.baijie.catalog.test.util.Utils.getPath;
 import static gq.baijie.catalog.util.HEX.hexToBytes;
@@ -36,33 +35,30 @@ public class TestHashFile {
     private static final String FILE_COMPLEX_SHA256 =
             "3CDAF3BBE70A531418E032AAC790DAB75ACD78041DD7176B5DCEA385F102B536";
 
+    private static final Hash.Algorithm[] ALGORITHMS =
+            {Hash.Algorithm.MD5, Hash.Algorithm.SHA1, Hash.Algorithm.SHA256};
+
 
     @Test
     public void testHashRegularFile() throws IOException {
-        Path path = getPath(FILE_REGULAR);
-        RegularFile file = new RegularFile(path);
-        file.getHashs().add(new Hash(Hash.Algorithm.MD5));
-        file.getHashs().add(new Hash(Hash.Algorithm.SHA1));
-        file.getHashs().add(new Hash(Hash.Algorithm.SHA256));
-        new HashFile(file, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
-        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_MD5), file.getHashs().get(0).getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_SHA1), file.getHashs().get(1).getValue()));
-        assertTrue(
-                Arrays.equals(hexToBytes(FILE_REGULAR_SHA256), file.getHashs().get(2).getValue()));
+        final Path path = getPath(FILE_REGULAR);
+        final Hash[] hashResults = new Hash[ALGORITHMS.length];
+        new HashFile(path, ALGORITHMS, new HashMap<Hash.Algorithm, MessageDigest>(), hashResults)
+                .execute();
+        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_MD5), hashResults[0].getValue()));
+        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_SHA1), hashResults[1].getValue()));
+        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_SHA256), hashResults[2].getValue()));
     }
 
     @Test
     public void testHashComplexFile() throws IOException {
-        Path path = getPath(FILE_COMPLEX);
-        RegularFile file = new RegularFile(path);
-        file.getHashs().add(new Hash(Hash.Algorithm.MD5));
-        file.getHashs().add(new Hash(Hash.Algorithm.SHA1));
-        file.getHashs().add(new Hash(Hash.Algorithm.SHA256));
-        new HashFile(file, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
-        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_MD5), file.getHashs().get(0).getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_SHA1), file.getHashs().get(1).getValue()));
-        assertTrue(
-                Arrays.equals(hexToBytes(FILE_COMPLEX_SHA256), file.getHashs().get(2).getValue()));
+        final Path path = getPath(FILE_COMPLEX);
+        final Hash[] hashResults = new Hash[ALGORITHMS.length];
+        new HashFile(path, ALGORITHMS, new HashMap<Hash.Algorithm, MessageDigest>(), hashResults)
+                .execute();
+        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_MD5), hashResults[0].getValue()));
+        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_SHA1), hashResults[1].getValue()));
+        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_SHA256), hashResults[2].getValue()));
     }
 
 }
