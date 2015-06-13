@@ -11,7 +11,7 @@ public class DirectoryFile extends File {
     @Nonnull
     private final List<File> content = new LinkedList<>();
 
-    public DirectoryFile(Path path) {
+    protected DirectoryFile(Path path) {
         super(path);
     }
 
