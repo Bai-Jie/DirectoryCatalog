@@ -9,7 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compile project(':business')
+    compile project(':gateway')
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'commons-io:commons-io:2.4'
 }

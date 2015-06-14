@@ -1,6 +1,7 @@
 List<String> javaSubprojects = [
         ':domain',
         ':business',
+        ':gateway',
         ':app'
 ]
 
