@@ -1,7 +1,7 @@
 package gq.baijie.catalog.usecase;
 
 import java.security.MessageDigest;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,8 @@ public class GatherFileInformation implements UseCase {
         if (algorithms.length == 0) {
             return;
         }
-        final Map<Hash.Algorithm, MessageDigest> messageDigestCache = new HashMap<>();
+        final Map<Hash.Algorithm, MessageDigest> messageDigestCache =
+                new EnumMap<>(Hash.Algorithm.class);
         final Hash[] hashResultContainer = new Hash[algorithms.length];
         hashFiles(rootDirectoryFile, messageDigestCache, hashResultContainer);
     }
@@ -53,6 +54,8 @@ public class GatherFileInformation implements UseCase {
                 for (Hash hash : hashResultContainer) {
                     ((RegularFile) file).getHashs().add(hash);
                 }
+            } else {
+                throw new UnsupportedOperationException("unknown instance of File:" + file);
             }
         }
     }
