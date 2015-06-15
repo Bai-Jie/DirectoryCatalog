@@ -2,6 +2,7 @@ package gq.baijie.catalog.usecase;
 
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,8 @@ public class CheckFileInformation implements UseCase {
     public static interface FileCheckerListener {
 
         @Nonnull
-        public CheckResult onCheckFileFailed(RegularFile file, IOException exception);
+        public CheckResult onCheckFileFailed(
+                @Nonnull RegularFile file, @Nonnull IOException exception);
 
         /**
          * called after the file is checked
@@ -100,7 +102,31 @@ public class CheckFileInformation implements UseCase {
          *                  Its order is same to the order of {@code file.getHashs()}
          */
         @Nonnull
-        public CheckResult onFileChecked(RegularFile file, Hash[] realHashs);
+        public CheckResult onFileChecked(@Nonnull RegularFile file, @Nonnull Hash[] realHashs);
+
+    }
+
+    public static abstract class SimpleFileCheckerListener implements FileCheckerListener {
+
+        @Nonnull
+        @Override
+        public final CheckResult onFileChecked(
+                @Nonnull RegularFile file, @Nonnull Hash[] realHashs) {
+            return onFileChecked(file, realHashs,
+                    Arrays.equals(file.getHashs().toArray(), realHashs));
+        }
+
+        /**
+         * called after the file is checked
+         *
+         * @param file      the file on check
+         * @param realHashs current hash value of the file on the file system.
+         *                  Its order is same to the order of {@code file.getHashs()}
+         * @param fileOk    true if file.getHashs() equals to realHashs.
+         */
+        @Nonnull
+        public abstract CheckResult onFileChecked(
+                @Nonnull RegularFile file, @Nonnull Hash[] realHashs, boolean fileOk);
 
     }
 
