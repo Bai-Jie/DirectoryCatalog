@@ -2,6 +2,7 @@ List<String> javaSubprojects = [
         ':domain',
         ':business',
         ':gateway',
+        ':client:cli',
         ':app'
 ]
 
