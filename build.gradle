@@ -11,7 +11,7 @@ javaSubprojects.each { projectPath ->
         apply plugin: 'java'
 
         sourceCompatibility = JavaVersion.VERSION_1_7
-        version = '1.0'
+        version = '2.0'
 
         group = 'gq.baijie.catalog'
 
