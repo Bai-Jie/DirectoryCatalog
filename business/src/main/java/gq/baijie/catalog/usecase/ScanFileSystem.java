@@ -50,14 +50,14 @@ public class ScanFileSystem implements UseCase {
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                 throws IOException {
             final DirectoryFile subDirectory = new DirectoryFile(dir);
-            mCurrentDirectory.getContent().add(subDirectory);
+            mCurrentDirectory.addChild(subDirectory);
             mCurrentDirectory = subDirectory;
             return CONTINUE;
         }
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            mCurrentDirectory.getContent().add(new RegularFile(file));
+            mCurrentDirectory.addChild(new RegularFile(file));
             return CONTINUE;
         }
 

@@ -47,7 +47,7 @@ public class CheckFileInformation implements UseCase {
             @Nonnull Map<Hash.Algorithm, MessageDigest> messageDigestCache
     ) {
         CheckResult result = CheckResult.CONTINUE;
-        for (final File file : directory.getContent()) {
+        for (final File file : directory.getChildren()) {
             if (file instanceof DirectoryFile) {
                 result = checkFiles((DirectoryFile) file, messageDigestCache);
             } else if (file instanceof RegularFile) {

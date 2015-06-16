@@ -1,11 +1,15 @@
 package gq.baijie.catalog.entity;
 
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class File {
+import gq.baijie.catalog.util.TreeNode;
+
+public abstract class File implements TreeNode<File> {
 
     @Nonnull
     private final Path path;
@@ -22,12 +26,40 @@ public abstract class File {
         return path;
     }
 
+    @Override
     @Nullable
     public DirectoryFile getParent() {
         return parent;
     }
 
-    public void setParent(@Nullable DirectoryFile parent) {
+    protected void setParent(@Nullable DirectoryFile parent) {
         this.parent = parent;
     }
+
+    @Override
+    @Nonnull
+    public List<File> getChildren() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean addChild(@Nonnull File child) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeChild(@Nonnull File child) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Nonnull
+    public File clone() throws CloneNotSupportedException {
+        File clone = (File) super.clone();
+        if (clone.getParent() != null) {
+            clone.parent = clone.getParent().clone();
+        }
+        return clone;
+    }
+
 }

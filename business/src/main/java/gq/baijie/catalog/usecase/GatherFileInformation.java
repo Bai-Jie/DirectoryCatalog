@@ -45,7 +45,7 @@ public class GatherFileInformation implements UseCase {
             @Nonnull DirectoryFile directory,
             @Nonnull Map<Hash.Algorithm, MessageDigest> messageDigestCache,
             @Nonnull Hash[] hashResultContainer) {
-        for (final File file : directory.getContent()) {
+        for (final File file : directory.getChildren()) {
             if (file instanceof DirectoryFile) {
                 hashFiles((DirectoryFile) file, messageDigestCache, hashResultContainer);
             } else if (file instanceof RegularFile) {
