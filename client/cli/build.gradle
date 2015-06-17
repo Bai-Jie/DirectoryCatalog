@@ -1,3 +1,7 @@
+apply plugin: 'application'
+
+mainClassName = group + '.Main'
+
 dependencies {
     compile project(':gateway')
 }
