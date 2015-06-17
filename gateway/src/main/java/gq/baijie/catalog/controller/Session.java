@@ -1,4 +1,4 @@
-package gq.baijie.catalog.controlller;
+package gq.baijie.catalog.controller;
 
 import java.nio.file.Path;
 

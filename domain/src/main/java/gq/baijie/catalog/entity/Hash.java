@@ -1,8 +1,10 @@
 package gq.baijie.catalog.entity;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Hash {
 
@@ -53,26 +55,37 @@ public class Hash {
     }
 
     public enum Algorithm {
-        MD5(128),
-        SHA1(160),
-        SHA256(256);
+        MD5(128, "MD5"),
+        SHA1(160, "SHA-1"),
+        SHA256(256, "SHA-256");
 
         private final int bitsLength;
 
-        private Algorithm(int bitsLength) {
+        @Nonnull
+        private final String string;
+
+        private Algorithm(int bitsLength, @Nonnull String string) {
             this.bitsLength = bitsLength;
+            this.string = string;
         }
 
+        @Nonnull
         public String toString() {
-            switch (this) {
-                case MD5:
-                    return "MD5";
-                case SHA1:
-                    return "SHA-1";
-                case SHA256:
-                    return "SHA-256";
+            return string;
+        }
+
+        @Nullable
+        public static Algorithm fromString(@Nullable String algorithm) {
+            if (algorithm == null) {
+                return null;
             }
-            throw new Error("this method isn't up to date");
+            algorithm = algorithm.toUpperCase(Locale.US);
+            for (Algorithm algorithmEnum : values()) {
+                if (algorithmEnum.toString().equals(algorithm)) {
+                    return algorithmEnum;
+                }
+            }
+            throw new IllegalArgumentException("Unknown algorithm:" + algorithm);
         }
 
         public static Algorithm probeHashAlgorithm(int bitsLength) {
