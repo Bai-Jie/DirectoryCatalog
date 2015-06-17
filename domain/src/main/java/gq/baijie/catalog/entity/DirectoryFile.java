@@ -2,10 +2,12 @@ package gq.baijie.catalog.entity;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DirectoryFile extends File implements Cloneable {
 
@@ -20,6 +22,10 @@ public class DirectoryFile extends File implements Cloneable {
     @Nonnull
     public List<File> getChildren() {
         return Collections.unmodifiableList(content);
+    }
+
+    public void sortChildren(@Nullable Comparator<? super File> c) {
+        content.sort(c);
     }
 
     @Override

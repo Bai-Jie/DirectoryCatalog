@@ -2,6 +2,7 @@ package gq.baijie.catalog.entity;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -40,6 +41,11 @@ public abstract class File implements TreeNode<File> {
     @Nonnull
     public List<File> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void sortChildren(@Nullable Comparator<? super File> c) {
+        //do nothing for sorting emptyList
     }
 
     @Override

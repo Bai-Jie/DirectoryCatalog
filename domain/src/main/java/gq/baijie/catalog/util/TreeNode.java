@@ -1,5 +1,6 @@
 package gq.baijie.catalog.util;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -16,6 +17,8 @@ public interface TreeNode<E extends TreeNode<E>> {
      */
     @Nonnull
     public List<E> getChildren();
+
+    public void sortChildren(@Nullable Comparator<? super E> c);
 
     /**
      *

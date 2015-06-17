@@ -1,7 +1,6 @@
 package gq.baijie.catalog.storage.v1;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -42,11 +41,10 @@ public class Printer {
     }
 
     private static void sortDirectoryTree(File directoryTree) {
-        List<File> children = directoryTree.getChildren();
-        for (File file : children) {
+        for (File file : directoryTree.getChildren()) {
             sortDirectoryTree(file);
         }
-        Collections.sort(children, DIRECTORY_TREE_COMPARATOR);
+        directoryTree.sortChildren(DIRECTORY_TREE_COMPARATOR);
     }
 
     public String printHash() {
