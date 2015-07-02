@@ -12,10 +12,12 @@ import java.nio.file.StandardOpenOption;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.entity.Hash.Algorithm;
 
@@ -42,6 +44,7 @@ public class HashFile implements UseCase {
      * @param hashResults        the hash results of file
      * @throws IllegalArgumentException if hashResults.length < algorithms.length
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "hashResults is out parameter")
     public HashFile(
             @Nonnull Path file,
             @Nonnull Algorithm[] algorithms,
@@ -51,7 +54,7 @@ public class HashFile implements UseCase {
             throw new IllegalArgumentException("hashResults.length < algorithms.length");
         }
         this.file = file;
-        this.algorithms = algorithms;
+        this.algorithms = Arrays.copyOf(algorithms, algorithms.length);
         this.messageDigestCache = messageDigestCache;
         this.hashResults = hashResults;
     }

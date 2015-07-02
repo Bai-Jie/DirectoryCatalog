@@ -1,5 +1,7 @@
 package gq.baijie.catalog.entity;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -52,6 +54,14 @@ public class Hash {
             Hash otherHash = (Hash) obj;
             return algorithm == otherHash.algorithm && Arrays.equals(value, otherHash.value);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(getAlgorithm())
+                .append(getValue())
+                .toHashCode();
     }
 
     public enum Algorithm {

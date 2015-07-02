@@ -29,38 +29,47 @@ public class HashTest {
     public void testConstructorWithByteArrayAlgorithm() {
         Hash hash;
         hash = new Hash(HEX.hexToBytes(MD5_HEX), Hash.Algorithm.MD5);
+        System.out.println(hash);
         hash = new Hash(HEX.hexToBytes(SHA1_HEX), Hash.Algorithm.SHA1);
+        System.out.println(hash);
         hash = new Hash(HEX.hexToBytes(SHA256_HEX), Hash.Algorithm.SHA256);
+        System.out.println(hash);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructorWithByteArrayAlgorithmNull1() {
         Hash hash = new Hash(null, Hash.Algorithm.MD5);
+        System.out.println(hash);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructorWithByteArrayAlgorithmNull2() {
         Hash hash = new Hash(HEX.hexToBytes(MD5_HEX), null);
+        System.out.println(hash);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructorWithByteArrayAlgorithmNull3() {
         Hash hash = new Hash(null, null);
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayAlgorithmConsistent1() {
         Hash hash = new Hash(HEX.hexToBytes("00" + MD5_HEX), Hash.Algorithm.MD5);
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayAlgorithmConsistent2() {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA1_HEX), Hash.Algorithm.SHA1);
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayAlgorithmConsistent3() {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA256_HEX), Hash.Algorithm.SHA256);
+        System.out.println(hash);
     }
 
     // for public Hash(byte[] value)
@@ -79,21 +88,25 @@ public class HashTest {
     @Test(expected = NullPointerException.class)
     public void testConstructorWithByteArrayNull() {
         Hash hash = new Hash(null);
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayErrorValue1() {
         Hash hash = new Hash(HEX.hexToBytes("00" + MD5_HEX));
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayErrorValue2() {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA1_HEX));
+        System.out.println(hash);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithByteArrayErrorValue3() {
         Hash hash = new Hash(HEX.hexToBytes("00" + SHA256_HEX));
+        System.out.println(hash);
     }
 
     // for public boolean equals(Object obj)
