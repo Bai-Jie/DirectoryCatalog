@@ -1,7 +1,4 @@
 apply plugin: 'application'
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
-apply plugin: 'findbugs'
 
 mainClassName = group + '.Main'
 
@@ -12,13 +9,4 @@ dependencies {
     compile project(':gateway')
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'commons-io:commons-io:2.4'
-}
-
-checkstyle {
-    toolVersion = "6.2"
-    configFile = rootProject.file 'config/checkstyle/checkstyle.xml'
-}
-
-pmd {
-    ruleSets = ["java-basic", "java-braces"/*, "java-junit"*/]
 }

@@ -9,6 +9,9 @@ List<String> javaSubprojects = [
 javaSubprojects.each { projectPath ->
     project(projectPath) {
         apply plugin: 'java'
+        apply plugin: 'checkstyle'
+        apply plugin: 'pmd'
+        apply plugin: 'findbugs'
 
         sourceCompatibility = JavaVersion.VERSION_1_7
         version = '2.0'
@@ -29,5 +32,15 @@ javaSubprojects.each { projectPath ->
         dependencies {
             testCompile 'junit:junit:4.12'
         }
+
+        checkstyle {
+            toolVersion = "6.2"
+            configFile = rootProject.file 'config/checkstyle/checkstyle.xml'
+        }
+
+        pmd {
+            ruleSets = ["java-basic", "java-braces"/*, "java-junit"*/]
+        }
+
     }
 }
