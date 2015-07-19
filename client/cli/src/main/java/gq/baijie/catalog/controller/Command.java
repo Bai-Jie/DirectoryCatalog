@@ -5,10 +5,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.LinkedList;
+import java.util.List;
 
 import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.storage.v1.Exporter;
@@ -16,7 +17,7 @@ import gq.baijie.catalog.storage.v1.Importer;
 
 public abstract class Command implements Runnable {
 
-    protected Hash.Algorithm mAlgorithm = Hash.Algorithm.MD5;
+    protected final List<Hash.Algorithm> mAlgorithms = new LinkedList<>();
 
     protected Path mDirectory;
 
@@ -31,26 +32,21 @@ public abstract class Command implements Runnable {
         }
     }
 
-    public Command setAlgorithm(String algorithm) {
-        algorithm = algorithm.toUpperCase(Locale.US);
-        switch (algorithm) {
-            case "MD5":
-                mAlgorithm = Hash.Algorithm.MD5;
-                break;
-            case "SHA1":
-                mAlgorithm = Hash.Algorithm.SHA1;
-                break;
-            case "SHA256":
-                mAlgorithm = Hash.Algorithm.SHA256;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown Hash Algorithm:" + algorithm);
-        }
+    public boolean addAlgorithm(Hash.Algorithm algorithm) {
+        return mAlgorithms.add(algorithm);
+    }
+
+    public Command clearAlgorithm() {
+        mAlgorithms.clear();
         return this;
     }
 
-    public Command setDirectory(String directory) {
-        mDirectory = Paths.get(directory);
+    public boolean addAllAlgorithms(Collection<? extends Hash.Algorithm> c) {
+        return mAlgorithms.addAll(c);
+    }
+
+    public Command setDirectory(Path directory) {
+        mDirectory = directory;
         return this;
     }
 
@@ -68,7 +64,7 @@ public abstract class Command implements Runnable {
     }
 
     protected void assertArguments() {
-        if (mAlgorithm == null || mDirectory == null) {
+        if (mDirectory == null) {
             throw new IllegalStateException("haven't set arguments.");
         }
     }
@@ -87,7 +83,8 @@ public abstract class Command implements Runnable {
             try {
                 final StringBuilder stringBuilder = new StringBuilder();
                 final Session session = new Session();
-                session.gatherFileInformation(directory, new Hash.Algorithm[]{mAlgorithm});
+                session.gatherFileInformation(
+                        directory, mAlgorithms.toArray(new Hash.Algorithm[mAlgorithms.size()]));
                 session.exportFileInformation(new Exporter(stringBuilder));
                 Files.write(
                         file,
@@ -105,7 +102,17 @@ public abstract class Command implements Runnable {
     private static class VerifyCommand extends Command {
 
         @Override
-        public Command setAlgorithm(String algorithm) {
+        public boolean addAlgorithm(Hash.Algorithm algorithm) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Command clearAlgorithm() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean addAllAlgorithms(Collection<? extends Hash.Algorithm> c) {
             throw new UnsupportedOperationException();
         }
 

@@ -1,7 +1,8 @@
 apply plugin: 'application'
 
-mainClassName = group + '.Main'
+mainClassName = group + '.client.cli.Main'
 
 dependencies {
     compile project(':gateway')
+    compile 'com.beust:jcommander:1.48'
 }
