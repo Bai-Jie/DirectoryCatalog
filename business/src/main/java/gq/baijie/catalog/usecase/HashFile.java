@@ -12,12 +12,12 @@ import java.nio.file.StandardOpenOption;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.entity.Hash.Algorithm;
 
@@ -27,36 +27,31 @@ public class HashFile implements UseCase {
     private final Path file;
 
     @Nonnull
-    private final Algorithm[] algorithms;
+    private final Map<Algorithm, Hash> hashResults;
 
     @Nonnull
     private final Map<Algorithm, MessageDigest> messageDigestCache;
 
-    @Nonnull
-    private final Hash[] hashResults;
-
     /**
      * hash file with appointed algorithms
+     * <pre>
+     *     for each algorithm in hashResults
+     *         calculate hash value of the file with the algorithm
+     *         save the hash value in hashResults
+     * </pre>
      *
      * @param file               the regular file will be hashed
-     * @param algorithms         the hash algorithms
+     * @param hashResults        the hash algorithms will be used and where to save result in
      * @param messageDigestCache {@link MessageDigest} objects cache for reusing
-     * @param hashResults        the hash results of file
      * @throws IllegalArgumentException if hashResults.length < algorithms.length
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "hashResults is out parameter")
     public HashFile(
             @Nonnull Path file,
-            @Nonnull Algorithm[] algorithms,
-            @Nonnull Map<Algorithm, MessageDigest> messageDigestCache,
-            @Nonnull Hash[] hashResults) {
-        if (hashResults.length < algorithms.length) {
-            throw new IllegalArgumentException("hashResults.length < algorithms.length");
-        }
+            @Nonnull Map<Algorithm, Hash> hashResults,
+            @Nonnull Map<Algorithm, MessageDigest> messageDigestCache) {
         this.file = file;
-        this.algorithms = Arrays.copyOf(algorithms, algorithms.length);
-        this.messageDigestCache = messageDigestCache;
         this.hashResults = hashResults;
+        this.messageDigestCache = messageDigestCache;
     }
 
     public void execute() {
@@ -70,10 +65,10 @@ public class HashFile implements UseCase {
     }
 
     private void execute0() throws IOException, NoSuchAlgorithmException {
-        if (algorithms.length == 0) {
+        if (hashResults.isEmpty()) {
             return;
         }
-        final MessageDigest[] messageDigests = getMessageDigests();
+        final Map<Algorithm, MessageDigest> messageDigests = getMessageDigests();
         final DigestOutputStream digestOutputStream = generateDigestOutputStream(messageDigests);
 
         doHash(digestOutputStream);
@@ -95,13 +90,12 @@ public class HashFile implements UseCase {
     }
 
     @Nonnull
-    private MessageDigest[] getMessageDigests() throws NoSuchAlgorithmException {
-        final MessageDigest[] messageDigests = new MessageDigest[algorithms.length];
-        int count = 0;
-        for (Algorithm algorithm : algorithms) {
-            messageDigests[count++] = toMessageDigest(algorithm);
+    private Map<Algorithm, MessageDigest> getMessageDigests() throws NoSuchAlgorithmException {
+        final Map<Algorithm, MessageDigest> messageDigestMap = new EnumMap<>(Algorithm.class);
+        for (Algorithm algorithm : hashResults.keySet()) {
+            messageDigestMap.put(algorithm, toMessageDigest(algorithm));
         }
-        return messageDigests;
+        return messageDigestMap;
     }
 
     @Nonnull
@@ -115,7 +109,10 @@ public class HashFile implements UseCase {
     }
 
     @Nonnull
-    private DigestOutputStream generateDigestOutputStream(@Nonnull MessageDigest[] messageDigests) {
+    private DigestOutputStream generateDigestOutputStream(
+            @Nonnull Map<Algorithm, MessageDigest> messageDigestsMap) {
+        final Collection<MessageDigest> values = messageDigestsMap.values();
+        final MessageDigest[] messageDigests = values.toArray(new MessageDigest[values.size()]);
         DigestOutputStream digestOutputStream =
                 toDigestOutputStream(NullOutputStream.NULL_OUTPUT_STREAM, messageDigests[0]);
         for (int i = 1; i < messageDigests.length; i++) {
@@ -130,11 +127,9 @@ public class HashFile implements UseCase {
         return new DigestOutputStream(stream, digest);
     }
 
-    private void saveHashValues(@Nonnull MessageDigest[] messageDigests) {
-        int count = 0;
-        for (Algorithm algorithm : algorithms) {
-            hashResults[count] = new Hash(messageDigests[count].digest(), algorithm);
-            count++;
+    private void saveHashValues(@Nonnull Map<Algorithm, MessageDigest> messageDigests) {
+        for (Map.Entry<Algorithm, MessageDigest> entry : messageDigests.entrySet()) {
+            hashResults.put(entry.getKey(), new Hash(entry.getValue().digest(), entry.getKey()));
         }
     }
 

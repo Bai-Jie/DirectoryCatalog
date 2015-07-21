@@ -1,6 +1,7 @@
 package gq.baijie.catalog.controller;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +28,7 @@ public class FileCheckerListener extends CheckFileInformation.SimpleFileCheckerL
     @Nonnull
     @Override
     public CheckFileInformation.CheckResult onFileChecked(@Nonnull RegularFile file,
-            @Nonnull Hash[] realHashes, boolean fileOk) {
+            @Nonnull Map<Hash.Algorithm, Hash> realHashes, boolean fileOk) {
         if (fileOk) {
             return CheckFileInformation.CheckResult.CONTINUE;
         } else {

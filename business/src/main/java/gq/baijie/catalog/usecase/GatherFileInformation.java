@@ -37,23 +37,21 @@ public class GatherFileInformation implements UseCase {
         }
         final Map<Hash.Algorithm, MessageDigest> messageDigestCache =
                 new EnumMap<>(Hash.Algorithm.class);
-        final Hash[] hashResultContainer = new Hash[algorithms.length];
-        hashFiles(rootDirectoryFile, messageDigestCache, hashResultContainer);
+        hashFiles(rootDirectoryFile, messageDigestCache);
     }
 
     private void hashFiles(
             @Nonnull DirectoryFile directory,
-            @Nonnull Map<Hash.Algorithm, MessageDigest> messageDigestCache,
-            @Nonnull Hash[] hashResultContainer) {
+            @Nonnull Map<Hash.Algorithm, MessageDigest> messageDigestCache) {
         for (final File file : directory.getChildren()) {
             if (file instanceof DirectoryFile) {
-                hashFiles((DirectoryFile) file, messageDigestCache, hashResultContainer);
+                hashFiles((DirectoryFile) file, messageDigestCache);
             } else if (file instanceof RegularFile) {
-                new HashFile(file.getPath(), algorithms, messageDigestCache, hashResultContainer)
-                        .execute();
-                for (Hash hash : hashResultContainer) {
-                    ((RegularFile) file).getHashes().add(hash);
+                final Map<Hash.Algorithm, Hash> hashes = ((RegularFile) file).getHashes();
+                for (Hash.Algorithm algorithm : algorithms) {
+                    hashes.put(algorithm, null);
                 }
+                new HashFile(file.getPath(), hashes, messageDigestCache).execute();
             } else {
                 throw new UnsupportedOperationException("unknown instance of File:" + file);
             }

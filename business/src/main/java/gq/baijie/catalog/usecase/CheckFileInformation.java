@@ -2,10 +2,9 @@ package gq.baijie.catalog.usecase;
 
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -67,16 +66,9 @@ public class CheckFileInformation implements UseCase {
             @Nonnull final RegularFile file,
             @Nonnull Map<Hash.Algorithm, MessageDigest> messageDigestCache
     ) {
-        List<Hash> fileHashes = file.getHashes();
-        final Hash[] hashResultContainer = new Hash[fileHashes.size()];
-        final Hash.Algorithm[] algorithms = new Hash.Algorithm[fileHashes.size()];
-        int count = 0;
-        for (Hash hash : fileHashes) {
-            algorithms[count++] = hash.getAlgorithm();
-        }
+        final Map<Hash.Algorithm, Hash> hashResultContainer = new EnumMap<>(file.getHashes());
         try {
-            new HashFile(file.getPath(), algorithms, messageDigestCache, hashResultContainer)
-                    .execute();
+            new HashFile(file.getPath(), hashResultContainer, messageDigestCache).execute();
         } catch (RuntimeException e) {
             if (e.getCause() instanceof IOException) {
                 return fileCheckerListener.onCheckFileFailed(file, (IOException) e.getCause());
@@ -99,10 +91,10 @@ public class CheckFileInformation implements UseCase {
          *
          * @param file       the file on check
          * @param realHashes current hash value of the file on the file system.
-         *                   Its order is same to the order of {@code file.getHashes()}
          */
         @Nonnull
-        public CheckResult onFileChecked(@Nonnull RegularFile file, @Nonnull Hash[] realHashes);
+        public CheckResult onFileChecked(@Nonnull RegularFile file,
+                @Nonnull Map<Hash.Algorithm, Hash> realHashes);
 
     }
 
@@ -111,9 +103,8 @@ public class CheckFileInformation implements UseCase {
         @Nonnull
         @Override
         public final CheckResult onFileChecked(
-                @Nonnull RegularFile file, @Nonnull Hash[] realHashes) {
-            return onFileChecked(file, realHashes,
-                    Arrays.equals(file.getHashes().toArray(), realHashes));
+                @Nonnull RegularFile file, @Nonnull Map<Hash.Algorithm, Hash> realHashes) {
+            return onFileChecked(file, realHashes, Objects.equals(file.getHashes(), realHashes));
         }
 
         /**
@@ -121,12 +112,13 @@ public class CheckFileInformation implements UseCase {
          *
          * @param file       the file on check
          * @param realHashes current hash value of the file on the file system.
-         *                   Its order is same to the order of {@code file.getHashes()}
          * @param fileOk     true if file.getHashes() equals to realHashes.
          */
         @Nonnull
         public abstract CheckResult onFileChecked(
-                @Nonnull RegularFile file, @Nonnull Hash[] realHashes, boolean fileOk);
+                @Nonnull RegularFile file,
+                @Nonnull Map<Hash.Algorithm, Hash> realHashes,
+                boolean fileOk);
 
     }
 

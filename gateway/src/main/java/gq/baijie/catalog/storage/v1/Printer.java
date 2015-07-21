@@ -1,6 +1,7 @@
 package gq.baijie.catalog.storage.v1;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -85,8 +86,8 @@ public class Printer {
         }
     }
 
-    private String getRegularFileHashAsHex(RegularFile regularFile) {
-        final List<Hash> fileHashes = regularFile.getHashes();
+    private String getRegularFileHashAsHex(RegularFile regularFile) {//TODO which algorithm
+        final List<Hash> fileHashes = new ArrayList<>(regularFile.getHashes().values());
         if (fileHashes.size() > 1) {
             throw new UnsupportedOperationException();//TODO
         } else {

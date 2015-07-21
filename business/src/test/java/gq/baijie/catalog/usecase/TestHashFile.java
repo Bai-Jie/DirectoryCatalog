@@ -5,14 +5,15 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.MessageDigest;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import gq.baijie.catalog.entity.Hash;
 
 import static gq.baijie.catalog.test.util.Utils.getPath;
 import static gq.baijie.catalog.util.HEX.hexToBytes;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 public class TestHashFile {
 
@@ -42,23 +43,34 @@ public class TestHashFile {
     @Test
     public void testHashRegularFile() throws IOException {
         final Path path = getPath(FILE_REGULAR);
-        final Hash[] hashResults = new Hash[ALGORITHMS.length];
-        new HashFile(path, ALGORITHMS, new HashMap<Hash.Algorithm, MessageDigest>(), hashResults)
-                .execute();
-        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_MD5), hashResults[0].getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_SHA1), hashResults[1].getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_REGULAR_SHA256), hashResults[2].getValue()));
+        Map<Hash.Algorithm, Hash> hashes = new EnumMap<>(Hash.Algorithm.class);
+        for (Hash.Algorithm algorithm : ALGORITHMS) {
+            hashes.put(algorithm, null);
+        }
+        new HashFile(path, hashes, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
+        assertHashValue(FILE_REGULAR_MD5, hashes, Hash.Algorithm.MD5);
+        assertHashValue(FILE_REGULAR_SHA1, hashes, Hash.Algorithm.SHA1);
+        assertHashValue(FILE_REGULAR_SHA256, hashes, Hash.Algorithm.SHA256);
+        System.out.println(hashes);
     }
 
     @Test
     public void testHashComplexFile() throws IOException {
         final Path path = getPath(FILE_COMPLEX);
-        final Hash[] hashResults = new Hash[ALGORITHMS.length];
-        new HashFile(path, ALGORITHMS, new HashMap<Hash.Algorithm, MessageDigest>(), hashResults)
-                .execute();
-        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_MD5), hashResults[0].getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_SHA1), hashResults[1].getValue()));
-        assertTrue(Arrays.equals(hexToBytes(FILE_COMPLEX_SHA256), hashResults[2].getValue()));
+        Map<Hash.Algorithm, Hash> hashes = new EnumMap<>(Hash.Algorithm.class);
+        for (Hash.Algorithm algorithm : ALGORITHMS) {
+            hashes.put(algorithm, null);
+        }
+        new HashFile(path, hashes, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
+        assertHashValue(FILE_COMPLEX_MD5, hashes, Hash.Algorithm.MD5);
+        assertHashValue(FILE_COMPLEX_SHA1, hashes, Hash.Algorithm.SHA1);
+        assertHashValue(FILE_COMPLEX_SHA256, hashes, Hash.Algorithm.SHA256);
+        System.out.println(hashes);
+    }
+
+    private static void assertHashValue(
+            String expecteds, Map<Hash.Algorithm, Hash> hashes, Hash.Algorithm algorithm) {
+        assertArrayEquals(hexToBytes(expecteds), hashes.get(algorithm).getValue());
     }
 
 }

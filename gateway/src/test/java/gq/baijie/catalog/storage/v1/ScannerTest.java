@@ -3,10 +3,12 @@ package gq.baijie.catalog.storage.v1;
 import org.junit.Test;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.entity.RegularFile;
 import gq.baijie.catalog.util.HEX;
 
@@ -56,7 +58,7 @@ public class ScannerTest {
     public void testParseFileMD5() {
         RegularFile regularFile =
                 Scanner.parseFile(DIRECTORY_PATH_EXAMPLE, FILE_INFORMATION_EXAMPLE_MD5);
-        assertHashEquals(FILE_INFORMATION_EXAMPLE_MD5_HASH, getFirstHashValue(regularFile));
+        assertHashEquals(FILE_INFORMATION_EXAMPLE_MD5_HASH, getHashValue(regularFile));
         assertEquals(FILE_INFORMATION_EXAMPLE_FILENAME, getFileName(regularFile));
         System.out.println(regularFile);
     }
@@ -65,7 +67,7 @@ public class ScannerTest {
     public void testParseFileSHA1() {
         RegularFile regularFile =
                 Scanner.parseFile(DIRECTORY_PATH_EXAMPLE, FILE_INFORMATION_EXAMPLE_SHA1);
-        assertHashEquals(FILE_INFORMATION_EXAMPLE_SHA1_HASH, getFirstHashValue(regularFile));
+        assertHashEquals(FILE_INFORMATION_EXAMPLE_SHA1_HASH, getHashValue(regularFile));
         assertEquals(FILE_INFORMATION_EXAMPLE_FILENAME, getFileName(regularFile));
         System.out.println(regularFile);
     }
@@ -74,7 +76,7 @@ public class ScannerTest {
     public void testParseFileSHA256() {
         RegularFile regularFile =
                 Scanner.parseFile(DIRECTORY_PATH_EXAMPLE, FILE_INFORMATION_EXAMPLE_SHA256);
-        assertHashEquals(FILE_INFORMATION_EXAMPLE_SHA256_HASH, getFirstHashValue(regularFile));
+        assertHashEquals(FILE_INFORMATION_EXAMPLE_SHA256_HASH, getHashValue(regularFile));
         assertEquals(FILE_INFORMATION_EXAMPLE_FILENAME, getFileName(regularFile));
         System.out.println(regularFile);
     }
@@ -83,8 +85,11 @@ public class ScannerTest {
         assertArrayEquals(HEX.hexToBytes(expected), actual);
     }
 
-    private static byte[] getFirstHashValue(@Nonnull RegularFile regularFile) {
-        return regularFile.getHashes().get(0).getValue();
+    private static byte[] getHashValue(@Nonnull RegularFile regularFile) {
+        Collection<Hash> hashCollection = regularFile.getHashes().values();
+        Hash[] hashes = hashCollection.toArray(new Hash[hashCollection.size()]);
+        assertTrue("should only have one hash value", hashes.length == 1);
+        return hashes[0].getValue();
     }
 
     private static String getFileName(@Nonnull RegularFile regularFile) {

@@ -31,6 +31,7 @@ javaSubprojects.each { projectPath ->
 
         dependencies {
             testCompile 'junit:junit:4.12'
+            testCompile 'com.google.code.findbugs:annotations:3.0.0'
         }
 
         checkstyle {
