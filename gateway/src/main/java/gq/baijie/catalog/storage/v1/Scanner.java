@@ -2,6 +2,7 @@ package gq.baijie.catalog.storage.v1;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,20 +14,22 @@ import gq.baijie.catalog.util.HEX;
 
 // hash table's format:
 /*
+
 (
 Node
 empty lines (required)
 )+
- */
-/*
+
+
 Node =:
 \[(d|D)\]\s+\*+\s+(\d+)         //like "[D] ******** 8"
 empty lines (optional)
 directory path
-files in this directory
- */
-/*
-files in this directory =:
+(file information)+             //files in this directory
+
+
+file information =:             //one file one line
+[(hash value of file|null)]\s+[filename]
 
  */
 public class Scanner {
@@ -109,12 +112,15 @@ public class Scanner {
         }
     }
 
-    private static RegularFile parseFile(String directoryPath, String fileLine) {
+    static RegularFile parseFile(String directoryPath, String fileLine) {
         Matcher matcher = FILE_PATTERN.matcher(fileLine);
         if (matcher.matches()) {
             RegularFile file = new RegularFile(
                     Paths.get(directoryPath, matcher.group("filename")));//TODO constant?
-            file.getHashs().add(new Hash(HEX.hexToBytes(matcher.group("hash"))));//TODO constant
+            String hex = matcher.group("hash").toUpperCase(Locale.US);//TODO constant
+            if (!"NULL".equals(hex)) {
+                file.getHashs().add(new Hash(HEX.hexToBytes(hex)));
+            }
             return file;
         } else {
             throw new RuntimeException("file format error"); //TODO exception
