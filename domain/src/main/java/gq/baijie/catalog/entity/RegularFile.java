@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 public class RegularFile extends File {
 
     @Nonnull
-    private List<Hash> hashs = new LinkedList<>();
+    private List<Hash> hashes = new LinkedList<>();
 
     public RegularFile(Path path) {
         super(path);
@@ -24,8 +24,8 @@ public class RegularFile extends File {
     ////////////////////////////////////////////////////////////////////////////
 
     @Nonnull
-    public List<Hash> getHashs() {
-        return hashs;
+    public List<Hash> getHashes() {
+        return hashes;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ public class RegularFile extends File {
     public int hashCode() {
         return new HashCodeBuilder(19, 31)
                 .appendSuper(super.hashCode())
-                .append(getHashs())
+                .append(getHashes())
                 .toHashCode();
     }
 
@@ -46,14 +46,14 @@ public class RegularFile extends File {
             return false;
         }
         RegularFile rightHand = (RegularFile) obj;
-        return Objects.equals(getHashs(), rightHand.getHashs());
+        return Objects.equals(getHashes(), rightHand.getHashes());
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("hashes", getHashs())
+                .append("hashes", getHashes())
                 .toString();
     }
 
@@ -61,8 +61,8 @@ public class RegularFile extends File {
     @Override
     public RegularFile clone() throws CloneNotSupportedException {
         RegularFile clone = (RegularFile) super.clone();
-        clone.hashs = new LinkedList<>();
-        clone.hashs.addAll(hashs);
+        clone.hashes = new LinkedList<>();
+        clone.hashes.addAll(hashes);
         return clone;
     }
 

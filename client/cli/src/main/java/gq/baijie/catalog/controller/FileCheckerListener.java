@@ -27,7 +27,7 @@ public class FileCheckerListener extends CheckFileInformation.SimpleFileCheckerL
     @Nonnull
     @Override
     public CheckFileInformation.CheckResult onFileChecked(@Nonnull RegularFile file,
-            @Nonnull Hash[] realHashs, boolean fileOk) {
+            @Nonnull Hash[] realHashes, boolean fileOk) {
         if (fileOk) {
             return CheckFileInformation.CheckResult.CONTINUE;
         } else {

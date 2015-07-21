@@ -52,7 +52,7 @@ public class GatherFileInformation implements UseCase {
                 new HashFile(file.getPath(), algorithms, messageDigestCache, hashResultContainer)
                         .execute();
                 for (Hash hash : hashResultContainer) {
-                    ((RegularFile) file).getHashs().add(hash);
+                    ((RegularFile) file).getHashes().add(hash);
                 }
             } else {
                 throw new UnsupportedOperationException("unknown instance of File:" + file);

@@ -86,11 +86,11 @@ public class Printer {
     }
 
     private String getRegularFileHashAsHex(RegularFile regularFile) {
-        final List<Hash> fileHashs = regularFile.getHashs();
-        if (fileHashs.size() > 1) {
+        final List<Hash> fileHashes = regularFile.getHashes();
+        if (fileHashes.size() > 1) {
             throw new UnsupportedOperationException();//TODO
         } else {
-            return fileHashs.size() == 1 ? HEX.bytesToHex(fileHashs.get(0).getValue()) : null;
+            return fileHashes.size() == 1 ? HEX.bytesToHex(fileHashes.get(0).getValue()) : null;
         }
     }
 

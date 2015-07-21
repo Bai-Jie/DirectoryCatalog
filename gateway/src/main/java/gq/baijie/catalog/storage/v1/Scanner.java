@@ -119,7 +119,7 @@ public class Scanner {
                     Paths.get(directoryPath, matcher.group("filename")));//TODO constant?
             String hex = matcher.group("hash").toUpperCase(Locale.US);//TODO constant
             if (!"NULL".equals(hex)) {
-                file.getHashs().add(new Hash(HEX.hexToBytes(hex)));
+                file.getHashes().add(new Hash(HEX.hexToBytes(hex)));
             }
             return file;
         } else {

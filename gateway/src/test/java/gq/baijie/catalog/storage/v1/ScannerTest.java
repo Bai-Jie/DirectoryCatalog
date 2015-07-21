@@ -47,7 +47,7 @@ public class ScannerTest {
     public void testParseFileNull() {
         RegularFile regularFile =
                 Scanner.parseFile(DIRECTORY_PATH_EXAMPLE, FILE_INFORMATION_EXAMPLE_NULL);
-        assertTrue(regularFile.getHashs().isEmpty());
+        assertTrue(regularFile.getHashes().isEmpty());
         assertEquals(FILE_INFORMATION_EXAMPLE_FILENAME, getFileName(regularFile));
         System.out.println(regularFile);
     }
@@ -84,7 +84,7 @@ public class ScannerTest {
     }
 
     private static byte[] getFirstHashValue(@Nonnull RegularFile regularFile) {
-        return regularFile.getHashs().get(0).getValue();
+        return regularFile.getHashes().get(0).getValue();
     }
 
     private static String getFileName(@Nonnull RegularFile regularFile) {
