@@ -1,6 +1,7 @@
 package gq.baijie.catalog.entity;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -8,7 +9,9 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Hash {
+import gq.baijie.catalog.util.HEX;
+
+public class Hash implements Cloneable {
 
     @Nonnull
     private final Algorithm algorithm;
@@ -33,6 +36,9 @@ public class Hash {
         this.value = value.clone();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // getters and setters
+    ////////////////////////////////////////////////////////////////////////////
 
     @Nonnull
     public Algorithm getAlgorithm() {
@@ -44,15 +50,22 @@ public class Hash {
         return value.clone();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // overridden Object methods
+    ////////////////////////////////////////////////////////////////////////////
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
+        } else if (obj == this) {
+            return true;
         } else if (obj.getClass() != getClass()) {
             return false;
         } else {
             Hash otherHash = (Hash) obj;
-            return algorithm == otherHash.algorithm && Arrays.equals(value, otherHash.value);
+            return getAlgorithm() == otherHash.getAlgorithm()
+                    && Arrays.equals(getValue(), otherHash.getValue());
         }
     }
 
@@ -63,6 +76,23 @@ public class Hash {
                 .append(getValue())
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("algorithm", getAlgorithm())
+                .append("value", HEX.bytesToHex(getValue()))
+                .toString();
+    }
+
+    @Override
+    public Hash clone() throws CloneNotSupportedException {
+        return (Hash) super.clone();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Nested Enumerations
+    //////////////////////////////////////////////////////////////////////////////
 
     public enum Algorithm {
         MD5(128, "MD5"),
