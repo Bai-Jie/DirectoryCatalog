@@ -4,7 +4,9 @@ package gq.baijie.catalog.storage.v1;
 import javax.annotation.Nonnull;
 
 import gq.baijie.catalog.entity.File;
+import gq.baijie.catalog.entity.Hash;
 import gq.baijie.catalog.storage.FileInformationExporter;
+import gq.baijie.catalog.storage.v1.util.FileUtils;
 
 // format:
 /*
@@ -49,7 +51,14 @@ public class Exporter implements FileInformationExporter {
         // export Hash Table
         stringBuilder.append(HEAD_HASH_TABLE).append(lineBreak);
         stringBuilder.append(UNDERLINED).append(lineBreak);
-        stringBuilder.append(printer.printHash());
+        Hash.Algorithm[] usedAlgorithms = FileUtils.getUsedAlgorithms(data);
+        if (usedAlgorithms.length > 1) {//TODO
+            throw new UnsupportedOperationException("unsupported multiple Algorithms just now");
+        } else if (usedAlgorithms.length == 1) {
+            stringBuilder.append(printer.printHash(usedAlgorithms[0]));
+        } else {
+            stringBuilder.append(printer.printHash(Hash.Algorithm.MD5));
+        }
         stringBuilder.append(lineBreak);
         return stringBuilder.toString();
     }

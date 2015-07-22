@@ -1,9 +1,7 @@
 package gq.baijie.catalog.storage.v1;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 import gq.baijie.catalog.entity.DirectoryFile;
 import gq.baijie.catalog.entity.File;
@@ -37,7 +35,7 @@ public class Printer {
         } catch (CloneNotSupportedException e) {
             throw new Error("Can't clone file", e);
         }
-        sortDirectoryTree(mFile);
+        sortDirectoryTree(mFile);//TODO shouldn't change File?
         return this;
     }
 
@@ -48,17 +46,18 @@ public class Printer {
         directoryTree.sortChildren(DIRECTORY_TREE_COMPARATOR);
     }
 
-    public String printHash() {
+    public String printHash(Hash.Algorithm algorithm) {
         StringBuilder stringBuilder = new StringBuilder();
-        printHash(stringBuilder);
+        printHash(algorithm, stringBuilder);
         return stringBuilder.toString();
     }
 
-    public void printHash(StringBuilder out) {
-        printHash(mFile, out, 1, mFile.getPath());
+    public void printHash(Hash.Algorithm algorithm, StringBuilder out) {
+        printHash(mFile, algorithm, out, 1, mFile.getPath());
     }
 
-    private void printHash(File tree, StringBuilder out, int depth, Path root) {
+    private void printHash(
+            File tree, Hash.Algorithm algorithm, StringBuilder out, int depth, Path root) {
         if (tree instanceof DirectoryFile) {
             out.append(mLineBreak);
             out.append("[D] ");
@@ -76,23 +75,19 @@ public class Printer {
             out.append(mLineBreak);
 
             for (File subtree : tree.getChildren()) {
-                printHash(subtree, out, depth + 1, root);
+                printHash(subtree, algorithm, out, depth + 1, root);
             }
         } else {
-            out.append(getRegularFileHashAsHex((RegularFile) tree));
+            out.append(getRegularFileHashAsHex((RegularFile) tree, algorithm));
             out.append(' ');
             out.append(tree.getPath().getFileName());
             out.append(mLineBreak);
         }
     }
 
-    private String getRegularFileHashAsHex(RegularFile regularFile) {//TODO which algorithm
-        final List<Hash> fileHashes = new ArrayList<>(regularFile.getHashes().values());
-        if (fileHashes.size() > 1) {
-            throw new UnsupportedOperationException();//TODO
-        } else {
-            return fileHashes.size() == 1 ? HEX.bytesToHex(fileHashes.get(0).getValue()) : null;
-        }
+    private String getRegularFileHashAsHex(RegularFile regularFile, Hash.Algorithm algorithm) {
+        final Hash hash = regularFile.getHashes().get(algorithm);
+        return hash != null ? HEX.bytesToHex(hash.getValue()) : null;
     }
 
     public String renderDirectoryTree() {
