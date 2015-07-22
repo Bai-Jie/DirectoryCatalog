@@ -47,17 +47,17 @@ public class VerifyCommandTest {
     @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     @Test
     public void testMainParameter() {
-        final String TEST_PATH = "/d/test-directory/中文/special_chars-·？·⋅㈵♥/";
-        mJCommander.parse(TEST_PATH);
-        assertEquals(Collections.singletonList(Paths.get(TEST_PATH)), mVerifyCommand.getRootPath());
+        mJCommander.parse(Constants.COMPLEX_PATH);
+        assertEquals(
+                Collections.singletonList(Paths.get(Constants.COMPLEX_PATH)),
+                mVerifyCommand.getRootPath());
         System.out.println(mVerifyCommand.getRootPath());
     }
 
     @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     @Test(expected = Exception.class)
     public void testMainParameterWithIllegalChars() {
-        final String TEST_PATH = "/d/test-directory/?*/";
-        mJCommander.parse(TEST_PATH);
+        mJCommander.parse(Constants.ILLEGAL_PATH);
     }
 
 }
