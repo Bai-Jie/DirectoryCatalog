@@ -1,5 +1,7 @@
 package gq.baijie.catalog.usecase;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,8 +16,10 @@ import gq.baijie.catalog.entity.Hash;
 import static gq.baijie.catalog.test.util.Utils.getPath;
 import static gq.baijie.catalog.util.HEX.hexToBytes;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-public class TestHashFile {
+public class HashFileTest {
 
     private static final String FILE_REGULAR = "/file_for_hash_test.txt";
 
@@ -39,38 +43,62 @@ public class TestHashFile {
     private static final Hash.Algorithm[] ALGORITHMS =
             {Hash.Algorithm.MD5, Hash.Algorithm.SHA1, Hash.Algorithm.SHA256};
 
+    private final Map<Hash.Algorithm, Hash> hashes = new EnumMap<>(Hash.Algorithm.class);
 
-    @Test
-    public void testHashRegularFile() throws IOException {
-        final Path path = getPath(FILE_REGULAR);
-        Map<Hash.Algorithm, Hash> hashes = new EnumMap<>(Hash.Algorithm.class);
+    @Before
+    public void setUp() {
+        hashes.clear();
         for (Hash.Algorithm algorithm : ALGORITHMS) {
             hashes.put(algorithm, null);
         }
+        for (Hash hash : hashes.values()) {
+            assertNull(hash);
+        }
+    }
+
+    @Test
+    public void testHashRegularFile() throws IOException {
+        setRandomHash();
+        final Path path = getPath(FILE_REGULAR);
+        System.out.println("before testHashRegularFile:" + hashes);
         new HashFile(path, hashes, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
         assertHashValue(FILE_REGULAR_MD5, hashes, Hash.Algorithm.MD5);
         assertHashValue(FILE_REGULAR_SHA1, hashes, Hash.Algorithm.SHA1);
         assertHashValue(FILE_REGULAR_SHA256, hashes, Hash.Algorithm.SHA256);
-        System.out.println(hashes);
+        System.out.println("after testHashRegularFile:" + hashes);
     }
 
     @Test
     public void testHashComplexFile() throws IOException {
+        setRandomHash();
         final Path path = getPath(FILE_COMPLEX);
-        Map<Hash.Algorithm, Hash> hashes = new EnumMap<>(Hash.Algorithm.class);
-        for (Hash.Algorithm algorithm : ALGORITHMS) {
-            hashes.put(algorithm, null);
-        }
+        System.out.println("before testHashComplexFile:" + hashes);
         new HashFile(path, hashes, new HashMap<Hash.Algorithm, MessageDigest>()).execute();
         assertHashValue(FILE_COMPLEX_MD5, hashes, Hash.Algorithm.MD5);
         assertHashValue(FILE_COMPLEX_SHA1, hashes, Hash.Algorithm.SHA1);
         assertHashValue(FILE_COMPLEX_SHA256, hashes, Hash.Algorithm.SHA256);
-        System.out.println(hashes);
+        System.out.println("after testHashComplexFile:" + hashes);
     }
 
     private static void assertHashValue(
             String expecteds, Map<Hash.Algorithm, Hash> hashes, Hash.Algorithm algorithm) {
         assertArrayEquals(hexToBytes(expecteds), hashes.get(algorithm).getValue());
+    }
+
+    private static void setRandomHash(Map<Hash.Algorithm, Hash> hashes) {
+        for (Hash.Algorithm algorithm : hashes.keySet()) {
+            hashes.put(
+                    algorithm,
+                    new Hash(RandomUtils.nextBytes(algorithm.getBitsLength() / 8), algorithm));
+        }
+        for (Hash hash : hashes.values()) {
+            assertNotNull(hash);
+            assertNotNull(hash.getValue());
+        }
+    }
+
+    private void setRandomHash() {
+        setRandomHash(hashes);
     }
 
 }

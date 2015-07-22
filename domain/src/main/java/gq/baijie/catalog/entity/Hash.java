@@ -109,6 +109,10 @@ public class Hash implements Cloneable {
             this.string = string;
         }
 
+        public int getBitsLength() {
+            return bitsLength;
+        }
+
         @Nonnull
         public String toString() {
             return string;
