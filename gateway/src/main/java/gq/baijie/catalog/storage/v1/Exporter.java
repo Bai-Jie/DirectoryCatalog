@@ -27,6 +27,8 @@ public class Exporter implements FileInformationExporter {
 
     static final String HEAD_HASH_TABLE = "Hash Table";
 
+    static final String HEAD_HASH_TABLE_FORMAT = HEAD_HASH_TABLE + " (%s)";
+
     @Nonnull
     private final StringBuilder stringBuilder;
 
@@ -49,18 +51,23 @@ public class Exporter implements FileInformationExporter {
         stringBuilder.append(printer.renderDirectoryTree());
         stringBuilder.append(lineBreak);
         // export Hash Table
-        stringBuilder.append(HEAD_HASH_TABLE).append(lineBreak);
-        stringBuilder.append(UNDERLINED).append(lineBreak);
         Hash.Algorithm[] usedAlgorithms = FileUtils.getUsedAlgorithms(data);
-        if (usedAlgorithms.length > 1) {//TODO
-            throw new UnsupportedOperationException("unsupported multiple Algorithms just now");
-        } else if (usedAlgorithms.length == 1) {
-            stringBuilder.append(printer.printHash(usedAlgorithms[0]));
+        if (usedAlgorithms.length >= 1) {
+            for (Hash.Algorithm algorithm : usedAlgorithms) {
+                exportHashTable(printer, algorithm);
+            }
         } else {
-            stringBuilder.append(printer.printHash(Hash.Algorithm.MD5));
+            exportHashTable(printer, Hash.Algorithm.MD5);
         }
-        stringBuilder.append(lineBreak);
+
         return stringBuilder.toString();
+    }
+
+    private void exportHashTable(Printer printer, Hash.Algorithm algorithm) {
+        stringBuilder.append(String.format(HEAD_HASH_TABLE_FORMAT, algorithm)).append(lineBreak);
+        stringBuilder.append(UNDERLINED).append(lineBreak);
+        stringBuilder.append(printer.printHash(algorithm));
+        stringBuilder.append(lineBreak);
     }
 
     @Override
