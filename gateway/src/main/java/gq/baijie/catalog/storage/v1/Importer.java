@@ -24,7 +24,9 @@ public class Importer implements FileInformationImporter {
     @Override
     public File importFileInformation() {
         SimpleImporter simpleImporter = new SimpleImporter(source);
-        return Scanner.fromHashTable(simpleImporter.getHashTable(), root);
+        simpleImporter.parse();
+        //TODO
+        return Scanner.fromHashTable(simpleImporter.getHashTables().get(0).getHashTable(), root);
     }
 
 }
