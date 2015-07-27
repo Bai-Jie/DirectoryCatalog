@@ -106,9 +106,7 @@ public abstract class File implements TreeNode<File>, Cloneable {
     @Nonnull
     public File clone() throws CloneNotSupportedException {
         File clone = (File) super.clone();
-        if (clone.getParent() != null) {
-            clone.parent = clone.getParent().clone();
-        }
+        clone.setParent(null);
         return clone;
     }
 

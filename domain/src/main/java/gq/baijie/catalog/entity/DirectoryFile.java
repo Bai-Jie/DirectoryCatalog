@@ -64,7 +64,9 @@ public class DirectoryFile extends File implements Cloneable {
     public DirectoryFile clone() throws CloneNotSupportedException {
         DirectoryFile clone = (DirectoryFile) super.clone();
         clone.content = new LinkedList<>();
-        clone.content.addAll(content);
+        for (File file : getChildren()) {
+            clone.addChild(file.clone());
+        }
         return clone;
     }
 
