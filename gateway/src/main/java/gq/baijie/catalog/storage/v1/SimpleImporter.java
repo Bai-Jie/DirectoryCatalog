@@ -1,5 +1,7 @@
 package gq.baijie.catalog.storage.v1;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -153,6 +155,14 @@ public class SimpleImporter {
         public void setAlgorithm(@Nullable String algorithm) {
             mAlgorithm = algorithm;
         }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("algorithm", getAlgorithm())
+                    .append("hash table", getHashTable())
+                    .toString();
+        }
     }
 
     private static enum State {
@@ -194,6 +204,14 @@ public class SimpleImporter {
         public int getEndPosition() {
             return mEndPosition;
         }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("start position", getStartPostion())
+                    .append("end position", getEndPosition())
+                    .toString();
+        }
     }
 
     private static class DirectoryTreeHead extends Head {
@@ -209,7 +227,7 @@ public class SimpleImporter {
         static final String CAPTURING_GROUP_NAME_ALGORITHM = "algorithm";
 
         static final Pattern PATTERN_HEAD_HASH_TABLE = Pattern.compile(
-                String.format("^%s(?:\\s*\\((<%s>.*)\\))?$\\s{0,2}^%s$",
+                String.format("^%s(?:\\s*\\((?<%s>.*)\\))?$\\s{0,2}^%s$",
                         Exporter.HEAD_HASH_TABLE,
                         CAPTURING_GROUP_NAME_ALGORITHM,
                         Exporter.UNDERLINED),
@@ -224,6 +242,14 @@ public class SimpleImporter {
 
         public void setAlgorithm(@Nullable String algorithm) {
             mAlgorithm = algorithm;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .appendSuper(super.toString())
+                    .append("algorithm", getAlgorithm())
+                    .toString();
         }
     }
 
