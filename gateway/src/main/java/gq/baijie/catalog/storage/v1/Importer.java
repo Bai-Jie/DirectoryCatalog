@@ -1,11 +1,14 @@
 package gq.baijie.catalog.storage.v1;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import gq.baijie.catalog.entity.File;
 import gq.baijie.catalog.storage.FileInformationImporter;
+import gq.baijie.catalog.storage.v1.util.FileUtils;
 
 public class Importer implements FileInformationImporter {
 
@@ -25,8 +28,14 @@ public class Importer implements FileInformationImporter {
     public File importFileInformation() {
         SimpleImporter simpleImporter = new SimpleImporter(source);
         simpleImporter.parse();
-        //TODO
-        return Scanner.fromHashTable(simpleImporter.getHashTables().get(0).getHashTable(), root);
+        final List<File> files = new LinkedList<>();
+        for (SimpleImporter.HashTable hashTable : simpleImporter.getHashTables()) {
+            files.add(Scanner.fromHashTable(hashTable.getHashTable(), root));
+        }
+        if (files.isEmpty()) {
+            throw new UnsupportedOperationException("No HashTable Unsupported");//TODO
+        }
+        return FileUtils.mergeFiles(files.toArray(new File[files.size()]));
     }
 
 }
